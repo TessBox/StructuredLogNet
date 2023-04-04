@@ -1,20 +1,19 @@
-﻿using System;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using TessBox.Sdk.Dotnet.Apps.WebApps.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace StructuredLogNet.Web;
 
 internal static class WebApplicationBuilderExtensions
 {
-    public static LoggerProvider AddLogging(this WebApplicationBuilder builder, IAppInfo appInfo)
+    public static ILoggerProvider AddStructuredLogging(this WebApplicationBuilder builder)
     {
         var logItemQueue = new LogItemQueue();
         builder.Services.AddSingleton<ILogItemQueue>(logItemQueue);
 
         // logger
         var loggerProvider = LoggerProviderFactory
-            .With(builder.Services, builder.Logging, appInfo)
+            .With(builder.Services, builder.Logging)
             .AddConsoleLogger()
             .AddLoggerTarget(() => new QueueFileLoggerTarget(logItemQueue))
             .Build();

@@ -1,6 +1,5 @@
-using Microsoft.Extensions.Configuration;
+using System.Threading.Channels;
 using Microsoft.Extensions.Hosting;
-using TessBox.Sdk.Dotnet.Logging;
 
 namespace StructuredLogNet.Web;
 
@@ -8,17 +7,23 @@ internal class LoggingHostedService : BackgroundService
 {
     private readonly IStructuredLogger<LoggingHostedService> _logger;
     private readonly IServiceProvider _serviceProvider;
-
+    private readonly ILogItemQueue _queue;
+    private readonly FileLoggerTarget _loggerTarget;
     private volatile bool _ready = false;
 
     public LoggingHostedService(
-        IConfiguration configuration,
         IStructuredLogger<LoggingHostedService> logger,
+        ILogItemQueue queue,
         IServiceProvider serviceProvider,
         IHostApplicationLifetime lifetime
     )
     {
         _logger = logger;
+        _queue = queue;
+
+        logger.Info("Log to file", new[] { ("LogPath", appInfo.LogPath) });
+        _loggerTarget = new FileLoggerTarget(appInfo.LogPath);
+
         _serviceProvider = serviceProvider;
 
         lifetime.ApplicationStarted.Register(() => _ready = true);
@@ -46,52 +51,6 @@ internal class LoggingHostedService : BackgroundService
             {
                 _logger.LogError(ex, "Error occurred executing Jobs.");
             }
-        }
-    }
-
-    private async Task RunJob(JobRun run)
-    {
-        try
-        {
-            _logger.Info(
-                $"Start job {run.Name}",
-                ("", run.Id),
-                ("Parameters", run.Parameters ?? string.Empty)
-            );
-            run.State = JobRunState.InRunning;
-            run.StartDate = DateTime.UtcNow;
-
-            var jobInstance = (IJob)
-                ActivatorUtilities.CreateInstance(_serviceProvider, run.ClassTypeToInvoke);
-            await jobInstance.InvokeAsync(run.Parameters, CancellationToken.None);
-
-            run.State = JobRunState.Completed;
-            run.EndDate = DateTime.UtcNow;
-            _logger.Info($"Job {run.Name} completed");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred executing Job {Name}.", run.Name);
-
-            if (run != null)
-            {
-                run.State = JobRunState.InError;
-            }
-        }
-        finally
-        {
-            _logger.LogInformation("Job run {runId}/{name} finished", run.Id, run.Name);
-        }
-    }
-
-    private void OnTaskCompleted(Task completedTask)
-    {
-        lock (_runningTasks)
-        {
-            if (!_runningTasks.Remove(completedTask))
-                throw new Exception("An unexpected error occured");
-
-            _remainingConcurrency++;
         }
     }
 
@@ -144,35 +103,5 @@ internal class QueueFileLoggerTarget : ILoggerTarget
     public void Log(LogItem item)
     {
         _queue.Queue(item);
-    }
-}
-
-[Description("Write the log in files")]
-internal class FileLoggerJob : IJob
-{
-    private readonly ILogItemQueue _queue;
-    private readonly FileLoggerTarget _loggerTarget;
-
-    public FileLoggerJob(
-        ILogItemQueue queue,
-        IAppInfo appInfo,
-        IStructuredLogger<FileLoggerJob> logger
-    )
-    {
-        _queue = queue;
-
-        logger.Info("Log to file", new[] { ("LogPath", appInfo.LogPath) });
-        _loggerTarget = new FileLoggerTarget(appInfo.LogPath);
-    }
-
-    public async Task InvokeAsync(string? parameters, CancellationToken cancellationToken)
-    {
-        while (true)
-        {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return;
-            }
-        }
     }
 }

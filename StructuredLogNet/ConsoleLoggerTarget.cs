@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace StructuredLogNet;
 
-internal class ConsoleLoggerTarget : ILoggerTarget
+public class ConsoleLoggerTarget : ILoggerTarget
 {
     public void Log(LogItem item)
     {

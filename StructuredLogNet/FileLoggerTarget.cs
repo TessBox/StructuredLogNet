@@ -2,7 +2,7 @@
 
 namespace StructuredLogNet;
 
-internal class FileLoggerTarget : ILoggerTarget
+public class FileLoggerTarget : ILoggerTarget
 {
     private readonly string _logPath;
 

@@ -4,10 +4,12 @@ using Microsoft.Extensions.Logging;
 
 namespace StructuredLogNet.Web;
 
-internal static class WebApplicationBuilderExtensions
+public static class WebApplicationBuilderExtensions
 {
     public static ILoggerProvider AddStructuredLogging(this WebApplicationBuilder builder)
     {
+        builder.Services.AddHostedService<LoggingHostedService>();
+
         var logItemQueue = new LogItemQueue();
         builder.Services.AddSingleton<ILogItemQueue>(logItemQueue);
 

@@ -1,4 +1,5 @@
 using System.Threading.Channels;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 namespace StructuredLogNet.Web;
@@ -6,25 +7,31 @@ namespace StructuredLogNet.Web;
 internal class LoggingHostedService : BackgroundService
 {
     private readonly IStructuredLogger<LoggingHostedService> _logger;
-    private readonly IServiceProvider _serviceProvider;
+
     private readonly ILogItemQueue _queue;
-    private readonly FileLoggerTarget _loggerTarget;
+    private readonly FileLoggerTarget? _loggerTarget;
     private volatile bool _ready = false;
 
     public LoggingHostedService(
         IStructuredLogger<LoggingHostedService> logger,
         ILogItemQueue queue,
-        IServiceProvider serviceProvider,
+        IConfiguration configuration,
         IHostApplicationLifetime lifetime
     )
     {
         _logger = logger;
         _queue = queue;
 
-        logger.Info("Log to file", new[] { ("LogPath", appInfo.LogPath) });
-        _loggerTarget = new FileLoggerTarget(appInfo.LogPath);
+        var logPath = configuration["StructuredLogNet:log_path"];
+        if (logPath == null)
+        {
+            logger.Error("Impossible to find the condifuration key : StructuredLogNet:log_path");
+            return;
+        }
 
-        _serviceProvider = serviceProvider;
+        logger.Info("Log to file", ("LogPath", logPath));
+
+        _loggerTarget = new FileLoggerTarget(logPath);
 
         lifetime.ApplicationStarted.Register(() => _ready = true);
     }
@@ -36,6 +43,8 @@ internal class LoggingHostedService : BackgroundService
             // App hasn't started yet, keep looping!
             await Task.Delay(1_000, stoppingToken);
         }
+        if (_loggerTarget == null)
+            return;
 
         _logger.Info("Ready to listen job");
 
@@ -49,14 +58,14 @@ internal class LoggingHostedService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred executing Jobs.");
+                _logger.Error("Error occurred executing Jobs.", ex);
             }
         }
     }
 
     public override async Task StopAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Queued Hosted Service is stopping.");
+        _logger.Info("Queued Hosted Service is stopping.");
 
         await base.StopAsync(stoppingToken);
     }

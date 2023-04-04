@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StructuredLogNet.Web", "Str
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StructuredLogNet.Example", "StructuredLogNet.Example\StructuredLogNet.Example.csproj", "{0649BFB5-3B85-4878-919A-04FB74F34882}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StructuredLogNet.Web.Example", "StructuredLogNet.Web.Example\StructuredLogNet.Web.Example.csproj", "{9515A2F7-4153-4C9D-96E5-F6B89B0F74AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{0649BFB5-3B85-4878-919A-04FB74F34882}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0649BFB5-3B85-4878-919A-04FB74F34882}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0649BFB5-3B85-4878-919A-04FB74F34882}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9515A2F7-4153-4C9D-96E5-F6B89B0F74AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9515A2F7-4153-4C9D-96E5-F6B89B0F74AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9515A2F7-4153-4C9D-96E5-F6B89B0F74AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9515A2F7-4153-4C9D-96E5-F6B89B0F74AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

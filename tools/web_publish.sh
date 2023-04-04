@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-VERSION="0.1.0"
+VERSION="0.1.1"
 echo "Create Nuget V $VERSION"
 
 cd ..

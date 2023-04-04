@@ -5,7 +5,7 @@
             "name": "Example (Web)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "build_web",
             "program": "${workspaceFolder}/StructuredLogNet.Web.Example/bin/Debug/net7.0/StructuredLogNet.Web.Example.dll",
             "args": [],
             "cwd": "${workspaceFolder}",

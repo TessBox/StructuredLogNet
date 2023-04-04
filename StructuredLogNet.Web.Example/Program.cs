@@ -10,6 +10,8 @@ builder.AddStructuredLogging();
 
 var app = builder.Build();
 
+app.UseStructuredLogging();
+
 app.MapGet(
     "/",
     (ILogger<Program> logger) =>

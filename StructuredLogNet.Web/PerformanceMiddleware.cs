@@ -15,6 +15,12 @@ internal class PerformanceMiddleware
     public async Task Invoke(HttpContext context, IStructuredLogger<PerformanceMiddleware> logger)
     {
         var stopwatch = Stopwatch.StartNew();
+
+        if (!context.Request.Headers.ContainsKey("X-Correlation-Id"))
+        {
+            context.Request.Headers.Add("X-Correlation-Id", Guid.NewGuid().ToString("D"));
+        }
+
         await _next(context);
 
         logger.Info(

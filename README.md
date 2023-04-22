@@ -3,12 +3,6 @@ StructuredLogNet is a free structured logger for .NET.
 
 It is compatible with ILogger interface.
 
-todo. ex json file
-
-Git but action
-
-Dotnet Framework to use structured  log
-
 ## Installation
 
 

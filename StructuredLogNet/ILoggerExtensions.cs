@@ -2,15 +2,24 @@
 
 namespace StructuredLogNet;
 
-public static class IStructuredLoggerExtensions
+public static class ILoggerExtensions
 {
     //--- Info ---------------------------------------------------------------------------------------------------------
     public static void Info(
-        this IStructuredLogger logger,
+        this ILogger logger,
         string message,
         params (string Key, string Value)[] extraFields
     )
     {
+        if (logger is not IStructuredLogger structuredLogger)
+        {
+#pragma warning disable CA2254 // Template should be a static expression
+            logger.LogInformation(message);
+#pragma warning restore CA2254 // Template should be a static expression
+
+            return;
+        }
+
         var logItem = new LogItem
         {
             Level = LogLevel.Information,
@@ -20,17 +29,26 @@ public static class IStructuredLoggerExtensions
             )
         };
 
-        logger.Log(logItem);
+        structuredLogger.Log(logItem);
     }
 
     //--- Warn ---------------------------------------------------------------------------------------------------------
 
     public static void Warn(
-        this IStructuredLogger logger,
+        this ILogger logger,
         string message,
         params (string Key, string Value)[] extraFields
     )
     {
+        if (logger is not IStructuredLogger structuredLogger)
+        {
+#pragma warning disable CA2254 // Template should be a static expression
+            logger.LogWarning(message);
+#pragma warning restore CA2254 // Template should be a static expression
+
+            return;
+        }
+
         var logItem = new LogItem
         {
             Level = LogLevel.Warning,
@@ -40,7 +58,7 @@ public static class IStructuredLoggerExtensions
             )
         };
 
-        logger.Log(logItem);
+        structuredLogger.Log(logItem);
     }
 
     //--- Error --------------------------------------------------------------------------------------------------------
@@ -50,6 +68,15 @@ public static class IStructuredLoggerExtensions
         params (string Key, string Value)[] extraFields
     )
     {
+        if (logger is not IStructuredLogger structuredLogger)
+        {
+#pragma warning disable CA2254 // Template should be a static expression
+            logger.LogError(exception, exception.Message);
+#pragma warning restore CA2254 // Template should be a static expression
+
+            return;
+        }
+
         var logItem = new LogItem
         {
             Level = LogLevel.Error,
@@ -63,11 +90,20 @@ public static class IStructuredLoggerExtensions
     }
 
     public static void Error(
-        this IStructuredLogger logger,
+        this ILogger logger,
         string message,
         params (string Key, string Value)[] extraFields
     )
     {
+        if (logger is not IStructuredLogger structuredLogger)
+        {
+#pragma warning disable CA2254 // Template should be a static expression
+            logger.LogError(message);
+#pragma warning restore CA2254 // Template should be a static expression
+
+            return;
+        }
+
         var logItem = new LogItem
         {
             Level = LogLevel.Error,
@@ -77,7 +113,7 @@ public static class IStructuredLoggerExtensions
             )
         };
 
-        logger.Log(logItem);
+        structuredLogger.Log(logItem);
     }
 
     public static void Error(
@@ -102,11 +138,20 @@ public static class IStructuredLoggerExtensions
 
     //--- Critial ------------------------------------------------------------------------------------------------------
     public static void Critical(
-        this IStructuredLogger logger,
+        this ILogger logger,
         Exception exception,
         params (string Key, string Value)[] extraFields
     )
     {
+        if (logger is not IStructuredLogger structuredLogger)
+        {
+#pragma warning disable CA2254 // Template should be a static expression
+            logger.LogCritical(exception, exception.Message);
+#pragma warning restore CA2254 // Template should be a static expression
+
+            return;
+        }
+
         var logItem = new LogItem
         {
             Level = LogLevel.Critical,
@@ -116,15 +161,24 @@ public static class IStructuredLoggerExtensions
             )
         };
 
-        logger.Log(logItem);
+        structuredLogger.Log(logItem);
     }
 
     public static void Critical(
-        this IStructuredLogger logger,
+        this ILogger logger,
         string message,
         params (string Key, string Value)[] extraFields
     )
     {
+        if (logger is not IStructuredLogger structuredLogger)
+        {
+#pragma warning disable CA2254 // Template should be a static expression
+            logger.LogCritical(message);
+#pragma warning restore CA2254 // Template should be a static expression
+
+            return;
+        }
+
         var logItem = new LogItem
         {
             Level = LogLevel.Critical,
@@ -134,16 +188,25 @@ public static class IStructuredLoggerExtensions
             )
         };
 
-        logger.Log(logItem);
+        structuredLogger.Log(logItem);
     }
 
     public static void Critical(
-        this IStructuredLogger logger,
+        this ILogger logger,
         string message,
         Exception exception,
         params (string Key, string Value)[] extraFields
     )
     {
+        if (logger is not IStructuredLogger structuredLogger)
+        {
+#pragma warning disable CA2254 // Template should be a static expression
+            logger.LogCritical(exception, message);
+#pragma warning restore CA2254 // Template should be a static expression
+
+            return;
+        }
+
         var logItem = new LogItem
         {
             Level = LogLevel.Critical,
@@ -154,6 +217,6 @@ public static class IStructuredLoggerExtensions
             )
         };
 
-        logger.Log(logItem);
+        structuredLogger.Log(logItem);
     }
 }

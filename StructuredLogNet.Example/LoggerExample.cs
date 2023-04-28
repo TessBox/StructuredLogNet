@@ -13,6 +13,6 @@ public class LoggerExample
 
     public void Log()
     {
-        _logger.LogInformation("From ILogger");
+        _logger.Info("From ILogger", ("Key1", "Value1"), ("Key2", "Value2"));
     }
 }

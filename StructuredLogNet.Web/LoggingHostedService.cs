@@ -22,10 +22,10 @@ internal class LoggingHostedService : BackgroundService
         _logger = logger;
         _queue = queue;
 
-        var logPath = configuration["StructuredLogNet:log_path"];
+        var logPath = configuration["structured_log_net:log_path"];
         if (logPath == null)
         {
-            logger.Error("Impossible to find the condifuration key : StructuredLogNet:log_path");
+            logger.Error("Impossible to find the configuration key : structured_log_net:log_path");
             return;
         }
 
